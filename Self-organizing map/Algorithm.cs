@@ -6,9 +6,9 @@ namespace Self_organizing_map
 {
     public class Algorithm
     {
-        private Map Map { get; set; } = new Map();
+        private Map Map { get; } = new Map();
 
-        private Random Random { get; set; } = new Random();
+        private Random Random { get; } = new Random();
 
         public void Run(List<List<double>> inputVectors, int neuronsNumber, int iterationsNumber)
         {
@@ -24,13 +24,14 @@ namespace Self_organizing_map
             }
 
             // Algorithm
+            const int t1 = 1000;
+            const int t2 = 1000;
             const double η0 = .5;
             const double σ0 = .5;
             for (var iter = 0; iter < iterationsNumber; iter++)
             {
-                var exp = Math.Exp(-(double)iter / iterationsNumber);
-                var η = η0 * exp;
-                var σ = σ0 * exp;
+                var η = η0 * Math.Exp(-(double)iter / t1);
+                var σ = σ0 * Math.Exp(-(double)iter / t2);
 
                 foreach (var vector in inputVectors)
                 {
