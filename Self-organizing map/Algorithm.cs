@@ -15,6 +15,13 @@ namespace Self_organizing_map
             if (inputVectors.Count == 0)
                 return;
 
+            Initialize(inputVectors.First().Count, neuronsNumber);
+            Educate(inputVectors, iterationsNumber);
+            Check(inputVectors);
+        }
+
+        private void Educate(List<List<double>> inputVectors, int iterationsNumber)
+        {
             // Vectors normalization
             foreach (var vector in inputVectors)
             {
@@ -26,11 +33,19 @@ namespace Self_organizing_map
             // Algorithm
             const int t1 = 1000;
             const int t2 = 1000;
-            const double η0 = .5;
+            const double η0 = .6;
+            const double ηMin = .01;
+            const double decayRate = .96;
             const double σ0 = .5;
-            for (var iter = 0; iter < iterationsNumber; iter++)
+            var iter = 0;
+            var η = .6;
+            do
             {
-                var η = η0 * Math.Exp(-(double)iter / t1);
+
+                //for (var iter = 0; iter < iterationsNumber; iter++)
+                //{
+                Console.WriteLine($"{iter}");
+                //var η = η0 * Math.Exp(-(double)iter / t1);
                 var σ = σ0 * Math.Exp(-(double)iter / t2);
 
                 foreach (var vector in inputVectors)
@@ -55,16 +70,37 @@ namespace Self_organizing_map
                         if (neuron == Map.Neurons[minNeuronIdx])
                             continue;
 
+                        var dist = neuron.DistanceToVector(vector);
                         for (var i = 0; i < neuron.W.Count; i++)
-                        {
-                            var dist = neuron.DistanceToVector(vector);
-                            neuron.W[i] += η * Math.Exp(-dist * dist / (2 * σ * σ)) * minDist;
-                        }
+                            neuron.W[i] += η * Math.Exp(-dist * dist / (2 * σ * σ)) * (vector[i] - neuron.W[i]);
                     }
                 }
-            }
+                iter++;
+                η *= decayRate;
+            } while (ηMin < η);
+        }
 
-            Initialize(inputVectors.First().Count, neuronsNumber);
+        private void Check(List<List<double>> inputVectors)
+        {
+            //var result = new List<int>();
+
+            foreach (var vector in inputVectors)
+            {
+                var minDist = double.MaxValue;
+                var minNeuronIdx = -1;
+                for (var n = 0; n < Map.Neurons.Count; n++)
+                {
+                    var dist = Map.Neurons[n].DistanceToVector(vector);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        minNeuronIdx = n;
+                    }
+                }
+
+                //result.Add(minNeuronIdx);
+                Console.WriteLine($"{minNeuronIdx,4}");
+            }
         }
 
         private void Initialize(int vectorSize, int neuronsNumber)
