@@ -32,10 +32,10 @@ namespace Self_organizing_map
 			const int t2 = 1000;
 			const double η0 = .6;
 			const double ηMin = .01;
-			const double decayRate = .96;
+			const double decayRate = .99;
 			const double σ0 = .5;
 			var iter = 0;
-			var η = .6;
+			var η = 1.0;
 			do {
 
 				//for (var iter = 0; iter < iterationsNumber; iter++)
