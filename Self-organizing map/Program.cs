@@ -7,11 +7,12 @@
             const int m = 3;
 
             var vectorsGenerator = new VectorsGenerator();
-            vectorsGenerator.Generate(q: 10, m: m, n: 25);
+            vectorsGenerator.Generate(vectorsNumber: 10, classesNumber: m, vectorLen: 25);
+
 
             var algorithm = new Algorithm();
             algorithm.Run(inputVectors: vectorsGenerator.Generate(10, 8, 25),
-                neuronsNumber: m, iterationsNumber: 100);
+                neuronsNumber: m);
         }
     }
 }
