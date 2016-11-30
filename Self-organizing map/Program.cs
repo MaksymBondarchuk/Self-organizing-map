@@ -11,7 +11,7 @@
 
             var algorithm = new Algorithm();
             algorithm.Run(inputVectors: vectorsGenerator.Generate(10, 8, 25),
-                neuronsNumber: m, iterationsNumber: 100);
+                neuronsNumber: m);
         }
     }
 }

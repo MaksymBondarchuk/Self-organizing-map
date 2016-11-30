@@ -12,16 +12,16 @@ namespace Self_organizing_map
 
 		private List<List<double>> InputVectors { get; set; } = new List<List<double>>();
 
-		public void Run(List<List<double>> inputVectors, int neuronsNumber, int iterationsNumber) {
+		public void Run(List<List<double>> inputVectors, int neuronsNumber) {
 			if (inputVectors.Count == 0)
 				return;
 
 			Initialize(inputVectors, inputVectors.First().Count, neuronsNumber);
-			Train(iterationsNumber);
+			Train();
 			Check();
 		}
 
-		private void Train(int iterationsNumber) {
+		private void Train() {
 			PrintWeights("Weights before training:");
 
 			// Vectors normalization
@@ -32,28 +32,17 @@ namespace Self_organizing_map
 			}
 
 			// Algorithm
-			const int t1 = 1000;
-			const int t2 = 1000;
-			const double η0 = .6;
-			const double ηMin = .01;
-			const double decayRate = .96;
-			const double σ0 = .5;
+			const double fridge = .01;
 			var iter = 0;
-			var learningRate = .6;
+			var learningRate = .99;
+			const double decayRate = .99;
+
 			do {
-
-				//for (var iter = 0; iter < iterationsNumber; iter++)
-				//{
-				//Console.WriteLine($"{iter}");
-				//var η = η0 * Math.Exp(-(double)iter / t1);
-				var σ = σ0 * Math.Exp(-(double)iter / t2);
-
 				foreach (var vector in InputVectors) {
 					var bmuIdx = GetBestMatchingUnit(vector);
 
 					var bestNeuron = Map.Neurons[bmuIdx];
 					for (var i = 0; i < Map.Neurons[bmuIdx].W.Count; i++)
-						//Map.Neurons[minNeuronIdx].W[i] += η * minDist;
 						bestNeuron.W[i] += learningRate * (vector[i] - bestNeuron.W[i]);
 
 					foreach (var neuron in Map.Neurons) {
@@ -62,12 +51,12 @@ namespace Self_organizing_map
 
 						var dist = neuron.DistanceToVector(vector);
 						for (var i = 0; i < neuron.W.Count; i++)
-							neuron.W[i] += learningRate * Math.Exp(-dist * dist / (2 * σ * σ)) * (vector[i] - neuron.W[i]);
+							neuron.W[i] += learningRate * Math.Exp(-dist * dist / (2 * learningRate * learningRate)) * (vector[i] - neuron.W[i]);
 					}
 				}
 				iter++;
 				learningRate *= decayRate;
-			} while (ηMin < learningRate);
+			} while (fridge < learningRate);
 			Console.WriteLine($"After {iter} iterations\n");
 		}
 
