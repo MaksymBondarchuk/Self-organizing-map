@@ -33,7 +33,7 @@ namespace Self_organizing_map
 			for (var i = 0; i < vectorLen; i++)
 				lastClassFirstVector.Add(0);
 
-			var lastClassStartIdx = vectorLen - lastLen - 1;
+			var lastClassStartIdx = vectorLen - lastLen;
 			for (var i = lastClassStartIdx; i < lastClassStartIdx + baseLen; i++)
 				lastClassFirstVector[i] = 1;
 

@@ -4,15 +4,16 @@
     {
         private static void Main()
         {
-            const int m = 3;
+            const int vectorsNumber = 25;
+            const int classesNumber = 3;
+            const int vectorLen = 50;
 
             var vectorsGenerator = new VectorsGenerator();
-            vectorsGenerator.Generate(vectorsNumber: 10, classesNumber: m, vectorLen: 25);
+            var vectors = vectorsGenerator.Generate(vectorsNumber: vectorsNumber, classesNumber: classesNumber, vectorLen: vectorLen);
 
 
             var algorithm = new Algorithm();
-            algorithm.Run(inputVectors: vectorsGenerator.Generate(10, 8, 25),
-                neuronsNumber: m);
+            algorithm.Run(inputVectors: vectors, neuronsNumber: classesNumber);
         }
     }
 }

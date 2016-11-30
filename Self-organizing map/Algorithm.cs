@@ -11,6 +11,7 @@ namespace Self_organizing_map
         private Random Random { get; } = new Random();
 
         private List<List<double>> InputVectors { get; set; } = new List<List<double>>();
+        private List<List<double>> OriginalInputVectors { get; set; } = new List<List<double>>();
 
         public void Run(List<List<double>> inputVectors, int neuronsNumber)
         {
@@ -38,7 +39,7 @@ namespace Self_organizing_map
             const double fridge = .01;
             var iter = 0;
             var learningRate = .99;
-            const double decayRate = .99;
+            const double decayRate = .999;
 
             do
             {
@@ -63,18 +64,28 @@ namespace Self_organizing_map
                 iter++;
                 learningRate *= decayRate;
             } while (fridge < learningRate);
-            Console.WriteLine($"After {iter} iterations\n");
+            Console.WriteLine($"Trained for {iter} iterations\n");
         }
 
         private void Check()
         {
             PrintWeights("Weights after training:");
 
-            foreach (var vector in InputVectors)
+            //foreach (var vector in InputVectors)
+            //{
+            //    var bmuIdx = GetBestMatchingUnit(vector);
+            //    foreach (var w in vector)
+            //        Console.Write($"{w,-6:0.00}");
+
+            //    Console.Write($" fits into {bmuIdx,4}");
+            //    Console.WriteLine();
+            //}
+            for (var i = 0; i < InputVectors.Count; i++)
+            //foreach (var vector in InputVectors)
             {
-                var bmuIdx = GetBestMatchingUnit(vector);
-                foreach (var w in vector)
-                    Console.Write($"{w,-6:0.00}");
+                var bmuIdx = GetBestMatchingUnit(InputVectors[i]);
+                foreach (var w in OriginalInputVectors[i])
+                    Console.Write($"{w,-1}");
 
                 Console.Write($" fits into {bmuIdx,4}");
                 Console.WriteLine();
@@ -85,6 +96,7 @@ namespace Self_organizing_map
         private void Initialize(IEnumerable<List<double>> inputVectors, int vectorSize, int neuronsNumber)
         {
             InputVectors = new List<List<double>>(inputVectors);
+            OriginalInputVectors = inputVectors.Select(x => x.ToList()).ToList(); ;
 
             for (var n = 0; n < neuronsNumber; n++)
             {
