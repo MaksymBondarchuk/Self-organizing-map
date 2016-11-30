@@ -15,11 +15,11 @@ namespace Self_organizing_map
 				return;
 
 			Initialize(inputVectors.First().Count, neuronsNumber);
-			Educate(inputVectors, iterationsNumber);
+			Train(inputVectors, iterationsNumber);
 			Check(inputVectors);
 		}
 
-		private void Educate(List<List<double>> inputVectors, int iterationsNumber) {
+		private void Train(List<List<double>> inputVectors, int iterationsNumber) {
 			// Vectors normalization
 			foreach (var vector in inputVectors) {
 				var vectorSum = vector.Sum();
