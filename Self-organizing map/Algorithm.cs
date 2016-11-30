@@ -10,18 +10,22 @@ namespace Self_organizing_map
 
 		private Random Random { get; } = new Random();
 
+		private List<List<double>> InputVectors { get; set; } = new List<List<double>>();
+
 		public void Run(List<List<double>> inputVectors, int neuronsNumber, int iterationsNumber) {
 			if (inputVectors.Count == 0)
 				return;
 
-			Initialize(inputVectors.First().Count, neuronsNumber);
-			Train(inputVectors, iterationsNumber);
-			Check(inputVectors);
+			Initialize(inputVectors, inputVectors.First().Count, neuronsNumber);
+			Train(iterationsNumber);
+			Check();
 		}
 
-		private void Train(List<List<double>> inputVectors, int iterationsNumber) {
+		private void Train(int iterationsNumber) {
+			PrintWeights("Weights before training:");
+
 			// Vectors normalization
-			foreach (var vector in inputVectors) {
+			foreach (var vector in InputVectors) {
 				var vectorSum = vector.Sum();
 				for (var i = 0; i < vector.Count; i++)
 					vector[i] /= vectorSum;
@@ -40,11 +44,11 @@ namespace Self_organizing_map
 
 				//for (var iter = 0; iter < iterationsNumber; iter++)
 				//{
-				Console.WriteLine($"{iter}");
+				//Console.WriteLine($"{iter}");
 				//var η = η0 * Math.Exp(-(double)iter / t1);
 				var σ = σ0 * Math.Exp(-(double)iter / t2);
 
-				foreach (var vector in inputVectors) {
+				foreach (var vector in InputVectors) {
 					var minDist = double.MaxValue;
 					var minNeuronIdx = -1;
 					for (var n = 0; n < Map.Neurons.Count; n++) {
@@ -65,7 +69,7 @@ namespace Self_organizing_map
 
 						var dist = neuron.DistanceToVector(vector);
 						for (var i = 0; i < neuron.W.Count; i++)
-							neuron.W[i] += η * Math.Exp(-dist * dist / (2 * σ * σ)) * (vector[i] - neuron.W[i]);
+							neuron.W[i] += η * /*Math.Exp(-dist * dist / (2 * σ * σ)) **/ (vector[i] - neuron.W[i]);
 					}
 				}
 				iter++;
@@ -73,18 +77,10 @@ namespace Self_organizing_map
 			} while (ηMin < η);
 		}
 
-		private void Check(List<List<double>> inputVectors) {
-			Console.WriteLine();
-			//var result = new List<int>();
-			foreach (var neuron in Map.Neurons) {
-				foreach (var w in neuron.W)
-					Console.Write($"{w,-6:0.00}");
-				Console.WriteLine();
-			}
-			Console.WriteLine();
+		private void Check() {
+			PrintWeights("Weights after training:");
 
-
-			foreach (var vector in inputVectors) {
+			foreach (var vector in InputVectors) {
 				var minDist = double.MaxValue;
 				var minNeuronIdx = -1;
 				for (var n = 0; n < Map.Neurons.Count; n++) {
@@ -95,19 +91,36 @@ namespace Self_organizing_map
 					}
 				}
 
+				foreach (var w in vector)
+					Console.Write($"{w,-6:0.00}");
+
 				//result.Add(minNeuronIdx);
-				Console.Write($"{minNeuronIdx,4}");
+				Console.Write($" fits into {minNeuronIdx,4}");
+				Console.WriteLine();
 			}
 			Console.WriteLine();
 		}
 
-		private void Initialize(int vectorSize, int neuronsNumber) {
+		private void Initialize(IEnumerable<List<double>> inputVectors, int vectorSize, int neuronsNumber) {
+			InputVectors = new List<List<double>>(inputVectors);
+
 			for (var n = 0; n < neuronsNumber; n++) {
 				var neuron = new Neuron();
 				for (var v = 0; v < vectorSize; v++)
 					neuron.W.Add(Random.NextDouble());
 				Map.Neurons.Add(neuron);
 			}
+		}
+
+		private void PrintWeights(string message)
+		{
+			Console.WriteLine(message);
+			foreach (var neuron in Map.Neurons) {
+				foreach (var w in neuron.W)
+					Console.Write($"{w,-6:0.00}");
+				Console.WriteLine();
+			}
+			Console.WriteLine();
 		}
 	}
 }
