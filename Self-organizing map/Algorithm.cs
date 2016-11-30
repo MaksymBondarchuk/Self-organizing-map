@@ -39,7 +39,7 @@ namespace Self_organizing_map
 			const double decayRate = .96;
 			const double σ0 = .5;
 			var iter = 0;
-			var η = .6;
+			var learningRate = .6;
 			do {
 
 				//for (var iter = 0; iter < iterationsNumber; iter++)
@@ -49,53 +49,37 @@ namespace Self_organizing_map
 				var σ = σ0 * Math.Exp(-(double)iter / t2);
 
 				foreach (var vector in InputVectors) {
-					var minDist = double.MaxValue;
-					var minNeuronIdx = -1;
-					for (var n = 0; n < Map.Neurons.Count; n++) {
-						var dist = Map.Neurons[n].DistanceToVector(vector);
-						if (dist < minDist) {
-							minDist = dist;
-							minNeuronIdx = n;
-						}
-					}
+					var bmuIdx = GetBestMatchingUnit(vector);
 
-					for (var i = 0; i < Map.Neurons[minNeuronIdx].W.Count; i++)
+					var bestNeuron = Map.Neurons[bmuIdx];
+					for (var i = 0; i < Map.Neurons[bmuIdx].W.Count; i++)
 						//Map.Neurons[minNeuronIdx].W[i] += η * minDist;
-						Map.Neurons[minNeuronIdx].W[i] += η * (vector[i] - Map.Neurons[minNeuronIdx].W[i]);
+						bestNeuron.W[i] += learningRate * (vector[i] - bestNeuron.W[i]);
 
 					foreach (var neuron in Map.Neurons) {
-						if (neuron == Map.Neurons[minNeuronIdx])
+						if (neuron == bestNeuron)
 							continue;
 
 						var dist = neuron.DistanceToVector(vector);
 						for (var i = 0; i < neuron.W.Count; i++)
-							neuron.W[i] += η * /*Math.Exp(-dist * dist / (2 * σ * σ)) **/ (vector[i] - neuron.W[i]);
+							neuron.W[i] += learningRate * Math.Exp(-dist * dist / (2 * σ * σ)) * (vector[i] - neuron.W[i]);
 					}
 				}
 				iter++;
-				η *= decayRate;
-			} while (ηMin < η);
+				learningRate *= decayRate;
+			} while (ηMin < learningRate);
+			Console.WriteLine($"After {iter} iterations\n");
 		}
 
 		private void Check() {
 			PrintWeights("Weights after training:");
 
 			foreach (var vector in InputVectors) {
-				var minDist = double.MaxValue;
-				var minNeuronIdx = -1;
-				for (var n = 0; n < Map.Neurons.Count; n++) {
-					var dist = Map.Neurons[n].DistanceToVector(vector);
-					if (dist < minDist) {
-						minDist = dist;
-						minNeuronIdx = n;
-					}
-				}
-
+				var bmuIdx = GetBestMatchingUnit(vector);
 				foreach (var w in vector)
 					Console.Write($"{w,-6:0.00}");
 
-				//result.Add(minNeuronIdx);
-				Console.Write($" fits into {minNeuronIdx,4}");
+				Console.Write($" fits into {bmuIdx,4}");
 				Console.WriteLine();
 			}
 			Console.WriteLine();
@@ -112,8 +96,7 @@ namespace Self_organizing_map
 			}
 		}
 
-		private void PrintWeights(string message)
-		{
+		private void PrintWeights(string message) {
 			Console.WriteLine(message);
 			foreach (var neuron in Map.Neurons) {
 				foreach (var w in neuron.W)
@@ -121,6 +104,20 @@ namespace Self_organizing_map
 				Console.WriteLine();
 			}
 			Console.WriteLine();
+		}
+
+		private int GetBestMatchingUnit(List<double> vector) {
+			var minDist = double.MaxValue;
+			var minNeuronIdx = -1;
+			for (var n = 0; n < Map.Neurons.Count; n++) {
+				var dist = Map.Neurons[n].DistanceToVector(vector);
+				if (!(dist < minDist))
+					continue;
+				minDist = dist;
+				minNeuronIdx = n;
+			}
+
+			return minNeuronIdx;
 		}
 	}
 }
