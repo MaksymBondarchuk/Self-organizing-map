@@ -7,7 +7,7 @@ namespace Self_organizing_map
 	{
 		private Random Random { get; } = new Random();
 
-		public List<List<double>> Generate(int vectorsNumber, int classesNumber, int vectorLen) {
+		public List<List<double>> Generate(int vectorsNumber, int classesNumber, int vectorLen, int imageDistortionFactor = 1) {
 			var baseLen = vectorLen / classesNumber;
 			var lastLen = baseLen + vectorLen % classesNumber;
 
@@ -26,7 +26,12 @@ namespace Self_organizing_map
 
 				vectors.Add(classFirstVector);
 				for (var i = 0; i < vectorsInClass - 1; i++)
-					vectors.Add(new List<double>(classFirstVector) { [Random.Next(classStartIdx, classStartIdx + baseLen - 1)] = 0 });
+				{
+					var vector = new List<double>(classFirstVector);
+					for (var j = 0; j < imageDistortionFactor; j++)
+						vector[Random.Next(classStartIdx, classStartIdx + baseLen - 1)] = 0;
+					vectors.Add(vector);
+				}
 			}
 
 			var lastClassFirstVector = new List<double>(vectorLen);
@@ -34,12 +39,17 @@ namespace Self_organizing_map
 				lastClassFirstVector.Add(0);
 
 			var lastClassStartIdx = vectorLen - lastLen;
-			for (var i = lastClassStartIdx; i < lastClassStartIdx + baseLen; i++)
+			for (var i = lastClassStartIdx; i < vectorLen; i++)
 				lastClassFirstVector[i] = 1;
 
 			vectors.Add(lastClassFirstVector);
-			for (var i = 0; i < vectorsInLastClass - 1; i++)
-				vectors.Add(new List<double>(lastClassFirstVector) { [Random.Next(lastClassStartIdx, vectorLen - 1)] = 0 });
+			for (var i = 0; i < vectorsInLastClass - 1; i++) {
+				var vector = new List<double>(lastClassFirstVector);
+				for (var j = 0; j < imageDistortionFactor; j++)
+					vector[Random.Next(lastClassStartIdx, vectorLen - 1)] = 0;
+				vectors.Add(vector);
+			}
+			//vectors.Add(new List<double>(lastClassFirstVector) { [Random.Next(lastClassStartIdx, vectorLen - 1)] = 0 });
 
 
 			//vectors.Add(new List<double> { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 });
