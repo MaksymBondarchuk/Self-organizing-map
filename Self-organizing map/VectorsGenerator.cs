@@ -10,7 +10,7 @@ namespace Self_organizing_map
 		private static int[] FillArray(int[] array, int number) {
 			var i = 0;
 			while (i < number)
-				array[i++ % array.Length]++;
+				array[array.Length - 1 - (i++ % array.Length)]++;
 			return array;
 		}
 
