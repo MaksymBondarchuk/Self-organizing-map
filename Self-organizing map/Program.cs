@@ -5,7 +5,7 @@
         private static void Main()
         {
             const int vectorsNumber = 25;
-            const int classesNumber = 8;
+            const int classesNumber = 16;
             const int vectorLen = 50;
 	        const int imageDistortionFactor = 2;
 
