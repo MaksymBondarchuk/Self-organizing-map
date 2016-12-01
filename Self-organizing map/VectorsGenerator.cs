@@ -5,7 +5,7 @@ namespace Self_organizing_map
 {
 	public class VectorsGenerator
 	{
-		private Random Random { get; set; } = new Random();
+		private Random Random { get; } = new Random();
 
 		public List<List<double>> Generate(int vectorsNumber, int classesNumber, int vectorLen) {
 			var baseLen = vectorLen / classesNumber;

@@ -9,7 +9,7 @@ namespace Self_organizing_map
         /// <summary>
         /// Weights
         /// </summary>
-        public List<double> W { get; set; } = new List<double>();
+        public List<double> W { get; } = new List<double>();
 
         public double DistanceToVector(List<double> vector)
         {

@@ -71,17 +71,7 @@ namespace Self_organizing_map
         {
             PrintWeights("Weights after training:");
 
-            //foreach (var vector in InputVectors)
-            //{
-            //    var bmuIdx = GetBestMatchingUnit(vector);
-            //    foreach (var w in vector)
-            //        Console.Write($"{w,-6:0.00}");
-
-            //    Console.Write($" fits into {bmuIdx,4}");
-            //    Console.WriteLine();
-            //}
             for (var i = 0; i < InputVectors.Count; i++)
-            //foreach (var vector in InputVectors)
             {
                 var bmuIdx = GetBestMatchingUnit(InputVectors[i]);
                 foreach (var w in OriginalInputVectors[i])
@@ -95,8 +85,9 @@ namespace Self_organizing_map
 
         private void Initialize(IEnumerable<List<double>> inputVectors, int vectorSize, int neuronsNumber)
         {
-            InputVectors = new List<List<double>>(inputVectors);
-            OriginalInputVectors = inputVectors.Select(x => x.ToList()).ToList(); ;
+	        var collection = inputVectors as List<double>[] ?? inputVectors.ToArray();
+	        InputVectors = new List<List<double>>(collection);
+            OriginalInputVectors = collection.Select(x => x.ToList()).ToList();
 
             for (var n = 0; n < neuronsNumber; n++)
             {
