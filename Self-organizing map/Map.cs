@@ -2,8 +2,8 @@
 
 namespace Self_organizing_map
 {
-    public class Map
-    {
-        public List<Neuron> Neurons { get; } = new List<Neuron>();
-    }
+	public class Map
+	{
+		public List<Neuron> Neurons { get; } = new List<Neuron>();
+	}
 }
